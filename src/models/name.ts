@@ -1,0 +1,6 @@
+export const db = "maini-stackflow"
+export const questionCollection = "question"
+export const answerCollection = "answers"
+export const commentCollection = "comment"
+export const voteCollection = "vote"
+export const questionAttachmentBucket = "question-Attachment"
