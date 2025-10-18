@@ -31,14 +31,14 @@ export default async function createQuestionCollection() {
     } catch (error:any) {
         // 409 Conflict typically means the resource already exists. Log error only if it's unexpected.
         if (error.code !== 409) {
-            console.error("Error creating table:", error.message);
+            console.error("Error creating Question table:", error.message);
         } else {
             console.log("Question table already exists, skipping creation.");
         }
     }
 
     // 2. Creating Columns (formerly Attributes)
-    console.log("Creating columns...");
+    console.log("Creating Question columns...");
     const attributePromises = [
         // CONVERTED: Using object argument { databaseId, tableId, key, size, required, ... }
         databases.createStringColumn({ 
@@ -88,9 +88,9 @@ export default async function createQuestionCollection() {
         console.log("Question Columns created");
     } catch (error:any) {
         if (error.code !== 409) {
-            console.error("Error creating columns:", error.message);
+            console.error("Error creating Question columns:", error.message);
         } else {
-            console.log("One or more columns already exist, skipping creation.");
+            console.log("One or more question columns already exist, skipping creation.");
         }
     }
 
