@@ -15,9 +15,9 @@ interface IAuthStore {
   jwt: string | null
   user: Models.User<UserPrefs> | null
   hydrated: boolean
+  authChecked: boolean
 
   setHydrated(): void;
-  // Note: Appwrite SDK methods usually use 'verifySession'
   verfiySession(): Promise<void>; 
   login(
     email: string,
@@ -47,19 +47,21 @@ export const useAuthStore = create<IAuthStore>()(
       jwt: null,
       user: null,
       hydrated: false,
+      authChecked: false,
 
       setHydrated() {
-        set({hydrated: true})
+        set({ hydrated: true, authChecked: false })
       },
 
       async verfiySession() {
         try {
-          // getSession already uses object arguments { sessionId }
-          const session = await account.getSession({sessionId: "current"}) 
-          set({session})
-
+          const session = await account.getSession({ sessionId: "current" })
+          set({ session })
         } catch (error) {
-          console.log(error)
+          // Clear any stale persisted auth on failure so UI doesn't treat as logged-in
+          set({ session: null, jwt: null, user: null })
+        } finally {
+          set({ authChecked: true })
         }
       },
 
@@ -114,8 +116,7 @@ export const useAuthStore = create<IAuthStore>()(
       async logout() {
         try {
           await account.deleteSessions()
-          set({session: null, jwt: null, user: null})
-          
+          set({ session: null, jwt: null, user: null, authChecked: true })
         } catch (error) {
           console.log(error)
         }
@@ -123,7 +124,7 @@ export const useAuthStore = create<IAuthStore>()(
     })),
     {
       name: "auth",
-      onRehydrateStorage(){
+      onRehydrateStorage() {
         return (state, error) => {
           if (!error) state?.setHydrated()
         }
