@@ -13,7 +13,7 @@ import { ID, Query } from "node-appwrite";
 // A utility function to update reputation (minimizes code duplication)
 async function updateReputation(userId: string, change: number) {
     try {
-        const authorPrefs = await users.getPrefs<UserPrefs>(userId);
+        const authorPrefs = await users.getPrefs<UserPrefs>({userId: userId});
         const currentRep = Number(authorPrefs.reputation) || 0;
 
         await users.updatePrefs<UserPrefs>({
