@@ -1,6 +1,6 @@
-# Riverflow (StackOverflow-style) — My Learning Journey, Stack, and Architecture
+# Riverflow — Q&A Application Prototype
 
-A full-stack Next.js app built to learn modern React/Next patterns, managed backend with Appwrite, and client state with Zustand. This README captures what I learned, why I chose this stack, what I built, and the patterns I’ll reuse in future projects.
+A Next.js/Appwrite prototype with account forms, Q&A components and voting/reputation route logic. This repository demonstrates application structure and backend integration; the root page still uses the Next.js starter interface.
 
 ## Tech Stack
 - Next.js (App Router) + React 19
@@ -15,15 +15,15 @@ A full-stack Next.js app built to learn modern React/Next patterns, managed back
 - Zustand: tiny, predictable client state with hydration control and persistence.
 - Tailwind: fast, consistent styling; primitives keep components simple and accessible.
 
-## Features Built
+## Implemented modules
 - Auth: register, login, session persistence (Zustand + Appwrite account)
-- Voting: upvote/downvote with idempotent logic and author reputation updates
+- Voting: create, switch or withdraw a vote and update author reputation. The current route trusts a submitted voter ID and uses separate database operations; verified identity and transactional consistency are deployment blockers.
 - Database + Storage bootstrap: automatic DB/tables/bucket creation in development
 - Clean routing: auth routes grouped under `(auth)` with layout-based redirects
 
 ## Architecture at a Glance
 See the full write-up with patterns and rationale:
-- docs/Project-Architecture-and-Patterns.md
+- Review the modules below directly; there is no separate architecture document in the current default branch.
 
 Key modules:
 - app/ — App Router pages, layouts, API route handlers
@@ -32,7 +32,7 @@ Key modules:
 - src/components/ui/ — Small UI primitives (Input, Label)
 - src/middleware.ts — One-time setup for DB and Storage in dev
 
-## Learning Highlights
+## Engineering notes
 - App Router vs Pages Router: use next/navigation hooks in app/; server components by default; mark interactive components with "use client".
 - Hydration: avoid mismatches by providing deterministic defaults (e.g., input type) and moving dynamic-only logic to client components.
 - Middleware: great for cross-cutting logic; run heavy setup once-per-process to avoid per-request costs.
@@ -65,9 +65,9 @@ Key modules:
 
 2) Environment
 - Provide Appwrite values through your env loader (see src/models/server/config.ts). You’ll need:
-  - APPWRITE_ENDPOINT
-  - APPWRITE_PROJECT_ID
-  - APPWRITE_API_KEY
+  - NEXT_PUBLIC_APPWRITE_HOST_URL
+  - NEXT_PUBLIC_APPWRITE_PROJECT_ID
+  - APPWRITE_API_KEY (server-only)
 
 3) Dev
 - npm run dev
@@ -82,11 +82,11 @@ Key modules:
 ## API Overview
 - POST /api/vote — create/update/withdraw a vote, then recalc totals and adjust author reputation.
 
-## Reusing These Patterns
+## Design patterns
 - Start server-first with App Router; use client components only when needed.
 - Encapsulate backend setup in idempotent functions; run once via middleware in dev.
 - Centralize auth in a small persisted store with hydration gates and a dedicated auth layout.
 - Keep UI primitives small and deterministic to avoid hydration issues.
 
 ## License
-Personal learning project; feel free to use the documented patterns.
+No standalone license file is present in the current default branch. Third-party packages retain their own licenses.
